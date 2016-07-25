@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link href='https://fonts.googleapis.com/css?family=Quattrocento+Sans:700' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="css/pikaday.css">
+        <link rel="stylesheet" href="css/reset.css">
+        <link rel="stylesheet" href="css/style.css">
+        <title>Courses task</title>
+    </head>
+    <body>
+        <section>
+            <button>+</button>
+            <aside class="left-menu">
+                <form action="localhost" method="post">
+                    <input type="search" placeholder="search:">
+                    <fieldset>
+                        <input type="checkbox" id="webChkbox" name="webChkbox" checked>
+                        <label for="webChkbox">web</label>
+                        <input type="checkbox" id="deskChkbox" name="deskChkbox" checked>
+                        <label for="deskChkbox">desktop</label><br>
+                        <input type="checkbox" id="mobileChkbox" name="mobileChkbox" checked>
+                        <label for="mobileChkbox">mobile</label>
+                        <input type="checkbox" id="supportChkbox" name="supportChkbox" checked>
+                        <label for="supportChkbox">support</label>
+                    </fieldset>
+                    <input type="text" id="currentDate">
+                </form>
+            </aside>
+            <div>
+                <table>
+                    <thead>
+                        <tr>
+                            <td>due date</td>
+                            <td>created</td>
+                            <td>members</td>
+                            <td>type</td>
+                            <td>status</td>
+                            <td>customer</td>
+                            <td><button>+</button></td>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                       <tr>
+                            <td>due date</td>
+                            <td>created</td>
+                            <td>members</td>
+                            <td>type</td>
+                            <td>status</td>
+                            <td>customer</td>
+                            <td><button>delete</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <aside class="right-menu">
+                <form>
+                    <input type="text" id="projectName" placeholder="project name:"><br>
+                    <input type="text" id="dueDate" placeholder="due date"><br>
+                    <input type="text" id="createdDate" placeholder="created"><br>
+                    <input type="text" id="membersCount" placeholder="members:"><br>
+                    <select id="taskType" name="taskType">
+                        <option disabled selected value> TYPE: </option>
+                        <option value="Petya">Create party</option>
+                    </select><br>
+                    <select id="customer" name="customer" required>
+                        <option disabled selected value> CUSTOMER: </option>
+                        <option value="Petya">Petya</option>
+                    </select><br>
+                    <input type="submit" value="CREATE">
+                </form>
+            </aside>
+        </section>
+        <footer>
+            <p>infopulse courses dashboard @ 2016</p>
+        </footer>
+        
+        <script src="js/moment.js"></script>
+        <script src="js/pikaday.js"></script>
+        <script src="js/main.js"></script>
+    </body>
+</html>
