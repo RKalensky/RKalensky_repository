@@ -119,3 +119,217 @@ body {
     -webkit-transition: opacity .3s linear;
     transition: opacity .3s linear;
 }
+
+/*--------------------------------------------------- menus -------------------------------------------------------*/
+
+.menu {
+    text-transform: uppercase;
+    position: fixed;
+    box-sizing: border-box;
+    height: 100%;
+    background: #000000;
+    overflow-y: auto;
+    z-index: 50;
+}
+
+.left-menu {
+    left: 0;
+    top: 0;
+    font-size: 1.125em;
+    width: 20.444em;
+    padding: 7em 2.556em 4.444em;
+}
+
+.right-menu {
+    right: 0;
+    top: 0;
+    width: 23em;
+    padding: 7.875em 2.875em 5em;
+}
+
+.input-group {
+    background: #0D0D0D;
+    margin-bottom: 2.111em;
+    padding: 1.444em 4%;
+    border-bottom: 2px solid #E67817;
+}
+
+.input-group .input-row-group {
+    margin-bottom: 2em;
+}
+
+.input-group .input-row-group:last-of-type {
+    margin-bottom: 0;
+}
+
+.menu input,
+.menu select {
+    height: 3.875em;
+    margin-bottom: 2.125em;
+    padding: 0 2.5em 0 1em;
+    width: 100%;
+    background: #221203;
+    color: inherit;
+    border-bottom: 2px solid #E67817;
+}
+
+.menu input[type="checkbox"] {
+    display: none;
+}
+
+.menu input[type="checkbox"] + label {
+    position: relative;
+    float: left;
+    box-sizing: border-box;
+    width: 50%;
+    cursor: pointer;
+}
+
+.menu input[type="checkbox"] + label:before {
+    content: "";
+    display: inline-block;
+    width: 2.111em;
+    height: 2.111em;
+    background: #2D1E10;
+    vertical-align: middle;
+    margin-right: .8em;
+}
+
+.menu input[type="checkbox"] + label:after {
+    position: absolute;
+    left: .5em;
+    top: -.6em;
+    content: "";
+    -webkit-transform: scale(0, 0);
+    transform: scale(0, 0);
+    width: 2.5em;
+    height: 2.5em;
+    display: block;
+    background: url("../img/verification-mark.svg") 50% 50% no-repeat;
+    background-size: 2.3em;
+    -webkit-transition: all .15s linear;
+    transition: all .15s linear;
+}
+
+.menu .search-field {
+    background-image: url("../img/magnifying-glass-search.svg");
+}
+
+.menu input::-webkit-input-placeholder {
+    font: 1em;
+    color: #FFFFFF;
+    text-transform: uppercase;
+    -webkit-transition: all .3s linear;
+    transition: all .3s linear; 
+}
+
+.menu input::-moz-placeholder {
+    font: 1em;
+    opacity: 1;
+    color: #FFFFFF;
+    text-transform: uppercase;
+    transition: all .3s linear;
+}
+
+.menu input:-ms-input-placeholder {
+    font: 1em;
+    color: #FFFFFF;
+    text-transform: uppercase;
+    transition: all .3s linear;
+}
+
+.menu .date,
+.menu .dropdown,
+.menu .search-field,
+.menu .dropdown-reverse {
+    background-repeat: no-repeat;
+    background-size: 1.444em;
+    background-position: 97% 20%;
+}
+
+.menu .date {
+    background-image: url("../img/calendar.svg");
+}
+
+.menu .dropdown {
+    text-transform: uppercase;
+    background-image: url("../img/sorting-arrow.svg");
+    background-position: 97% 30%;
+}
+
+.menu .dropdown-reverse {
+    background-image: url("../img/sorting-arrow-reverse.svg");
+    background-position: 97% 30%;
+}
+
+.menu .create-project {
+    color: inherit;
+    width: 100%;
+    height: 3.875em;
+    border: none;
+    background: #E67817;
+    box-shadow: 0 .35em 0 0 #9C5110;
+}
+
+/*--------------------------------------------------- footer -------------------------------------------------------*/
+
+.main-footer {
+    position: absolute;
+    font-size: 1.375em;
+    font-weight: bold;
+    height: 3em;
+    line-height: 3em;
+    width: 100%;
+    bottom: 0;
+    background: #E67817;
+    text-align: center;
+    z-index: 100;
+}
+
+/*------------------------------------------------ reset styles -----------------------------------------------------*/
+
+button {
+    font: inherit;
+    text-transform: uppercase;
+    background: none;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    padding: 0;
+}
+
+label {
+    -webkit-user-select: none;  
+    -moz-user-select: none;    
+    -ms-user-select: none; 
+    user-select: none;
+}
+
+input,
+select {
+    font: inherit;
+    display: block;
+    box-sizing: border-box;
+    border: none;
+}
+
+input::-ms-clear { 
+    display: none;
+}
+
+input::-ms-reveal { 
+    display: none;
+}
+
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration { 
+    display: none; 
+}
+
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
