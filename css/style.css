@@ -1,0 +1,121 @@
+html {
+    height: 100%;
+}
+
+body {
+    position: relative;
+    min-height: 100%;
+	background: #0A0B0D;
+    color: #FFFFFF;
+	font: 1em 'Assistant', sans-serif;
+}
+
+/*--------------------------------------------------- menu toggle -------------------------------------------------------*/
+
+.menu-toggle {
+    position: fixed;
+    top: 1.25em;
+    left: 1.5em;
+    width: 3em;
+    height: 3em;
+    border-radius: 50%;
+    z-index: 100;
+    transition: background-color .3s linear;
+}
+
+.menu-toggle:before {
+    content: "";
+    position: absolute;
+    width: 2em;
+    height: 1.375em;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(#FFFFFF 18.1818%, transparent 18.1818%, transparent 40.9091%, #FFFFFF 40.9091%, #FFFFFF 59.0909%, transparent 59.0909%, transparent 81.8182%, #FFFFFF 81.8182%, #FFFFFF 100%);
+}
+
+/*------------------------------------------------- table content -----------------------------------------------------*/
+
+.main-content {
+    text-transform: uppercase;
+    font-size: 1.125em;
+    padding: 1.333em 1.333em 6em;
+    margin-left: 20.444em;
+    position: relative;
+}
+
+.main-content table {
+    width: 100%;
+    text-align: center;
+}
+
+.main-content thead {
+    position: fixed;
+    right: 1.333em;
+    top: 0;
+    left: 21.777em;
+    padding-top: 1.333em;
+    color: #DC7316;
+    border-bottom: 2px solid #DC7316;
+    background: #0A0B0D;
+    z-index: 1;
+}
+
+.main-content thead tr {
+    display: table;
+    width: 100%;
+}
+
+.main-content th {
+    cursor: pointer;
+}
+
+.main-content th:last-of-type,
+.main-content thead .separator{
+    cursor: default;
+}
+
+.main-content th,
+.main-content td {
+    padding: 1.444em 0.444em;
+    vertical-align: middle;
+    max-width: 11em;
+}
+
+.main-content tbody tr:nth-of-type(even) {
+    background: #0F1012;
+}
+
+.main-content tbody .separator:before,
+.main-content thead .separator:before {
+    content: "";
+    display: inline-block;
+    height: 2em;
+    width: 2px;
+}
+
+.main-content tbody .separator:before {
+    background: #FFFFFF;
+}
+
+.main-content thead .separator:before {
+    background: #DC7316;
+}
+
+.main-content .add-new-project {
+    min-width: 1.444em;
+    height: 1.89em;
+    background: #0A0B0D url(../img/add-project.svg) no-repeat 50% 50%;
+    background-size: contain;
+}
+
+.main-content .delete-project {
+    font-size: inherit;
+    width: 1.444em;
+    height: 1.89em;
+    background: url(../img/remove-project.svg) no-repeat 50% 50%;
+    background-size: contain;
+    opacity: .15;
+    -webkit-transition: opacity .3s linear;
+    transition: opacity .3s linear;
+}
