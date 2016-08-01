@@ -333,3 +333,92 @@ select {
     -moz-appearance: none;
     appearance: none;
 }
+
+/*---------------------------------------------- elements states ---------------------------------------------------*/
+
+.menu-toggle:hover {
+    background-color: #4A4A4A;
+}
+
+.main-content .add-new-project:active,
+.main-content .delete-project:active {
+    width: 1em;
+    height: 1.45em;
+}
+
+.left-menu input[type="checkbox"]:checked + label:after {
+    -webkit-transform: scale(1, 1);
+    transform: scale(1, 1);
+}
+
+input:focus,
+select:focus {
+    outline: none;
+}
+
+input:focus::-webkit-input-placeholder {
+    text-indent: 30em;
+    opacity: 0;
+}
+
+input:focus::-moz-placeholder {
+    text-indent: 30em;
+    opacity: 0;
+}
+
+input:focus::-ms-input-placeholder {
+    text-indent: 30em;
+    opacity: 0;
+}
+
+.right-menu .create-project:active {
+    -webkit-transform: translateY(.35em);
+    transform: translateY(.35em);
+    box-shadow: none;
+}
+
+.main-content tbody tr:hover {
+    background: #353E44;
+}
+
+.main-content tbody tr:hover .delete-project {
+    opacity: .8;
+}
+
+/*------------------------------------------------- media queries -----------------------------------------------------*/
+
+@media screen and ( max-width: 1920px ) {
+    body {
+        font-size: 1em;
+    }
+}
+
+@media screen and ( max-width: 1600px ) {
+    body {
+        font-size: .9em;
+    }
+}
+
+@media screen and ( max-width: 1440px ) {
+    body {
+        font-size: .8em;
+    }
+}
+
+@media screen and ( max-width: 1366px ) {
+    body {
+        font-size: .7em;
+    }
+}
+
+@media screen and ( max-width: 1024px ) {
+    body {
+        font-size: .6em;
+    }
+}
+
+@media screen and ( max-width: 800px ) {
+    body {
+        font-size: .5em;
+    }
+}
