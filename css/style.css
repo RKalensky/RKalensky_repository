@@ -4,7 +4,7 @@ html {
 
 body {
     position: relative;
-    min-height: 100%;
+    height: 100%;
 	background: #0A0B0D;
     color: #FFFFFF;
 	font: 1em 'Assistant', sans-serif;
@@ -39,7 +39,7 @@ body {
 .main-content {
     text-transform: uppercase;
     font-size: 1.125em;
-    padding: 1.333em 1.333em 6em;
+    padding: 6.79em 1.333em 6em;
     margin-left: 20.444em;
     position: relative;
 }
@@ -56,7 +56,7 @@ body {
     left: 21.777em;
     padding-top: 1.333em;
     color: #DC7316;
-    border-bottom: 2px solid #DC7316;
+    border-bottom: 2px solid #737374;
     background: #0A0B0D;
     z-index: 1;
 }
@@ -68,6 +68,7 @@ body {
 
 .main-content th {
     cursor: pointer;
+    font-weight: normal;
 }
 
 .main-content th:last-of-type,
@@ -80,6 +81,11 @@ body {
     padding: 1.444em 0.444em;
     vertical-align: middle;
     max-width: 11em;
+}
+
+.main-content th:first-of-type,
+.main-content td:first-of-type {
+    font-weight: bold;
 }
 
 .main-content tbody tr:nth-of-type(even) {
@@ -144,7 +150,7 @@ body {
     right: 0;
     top: 0;
     width: 23em;
-    padding: 7.875em 2.875em 5em;
+    padding: 7.875em 2.875em;
 }
 
 .input-group {
@@ -274,9 +280,8 @@ body {
 /*--------------------------------------------------- footer -------------------------------------------------------*/
 
 .main-footer {
-    position: absolute;
+    position: fixed;
     font-size: 1.375em;
-    font-weight: bold;
     height: 3em;
     line-height: 3em;
     width: 100%;
