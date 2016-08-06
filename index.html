@@ -10,7 +10,7 @@
         <title>Courses task</title>
     </head>
     <body>
-        <button class="menu-toggle"></button>
+        <button class="toggle-menu"></button>
         <aside class="menu left-menu">
             <form action="localhost" method="post">
                 <input type="search" placeholder="search:" class="search-field">
@@ -35,200 +35,46 @@
             <table>
                 <thead>
                     <tr>
-                        <th>project name</th>
-                        <th class="separator"></th>
-                        <th>due date</th>
-                        <th>created</th>
-                        <th>members</th>
-                        <th>type</th>
-                        <th>status</th>
-                        <th>customer</th>
-                        <th><button class="add-new-project"></button></th>
+                        <th data-type="string"><span>project name</span></th>
+                        <th class="separator" data-sortable="no"></th>
+                        <th data-type="date"><span>due date</span></th>
+                        <th data-type="date"><span>created</span></th>
+                        <th data-type="number"><span>members</span></th>
+                        <th data-type="string"><span>type</span></th>
+                        <th data-type="string"><span>status</span></th>
+                        <th data-type="string"><span>customer</span></th>
+                        <th data-sortable="no"><button class="add-new-project"></button></th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td>project name</td>
-                        <td class="separator"></td>
-                        <td>due date</td>
-                        <td>created</td>
-                        <td>members</td>
-                        <td>type</td>
-                        <td>status</td>
-                        <td>customer</td>
-                        <td><button class="delete-project"></button></td>
-                    </tr>
-                    <tr>
-                        <td>project name</td>
-                        <td class="separator"></td>
-                        <td>due date</td>
-                        <td>created</td>
-                        <td>members</td>
-                        <td>type</td>
-                        <td>status</td>
-                        <td>customer</td>
-                        <td><button class="delete-project"></button></td>
-                    </tr>
-                    <tr>
-                        <td>project name</td>
-                        <td class="separator"></td>
-                        <td>due date</td>
-                        <td>created</td>
-                        <td>members</td>
-                        <td>type</td>
-                        <td>status</td>
-                        <td>customer</td>
-                        <td><button class="delete-project"></button></td>
-                    </tr>
-                    <tr>
-                        <td>project name</td>
-                        <td class="separator"></td>
-                        <td>due date</td>
-                        <td>created</td>
-                        <td>members</td>
-                        <td>type</td>
-                        <td>status</td>
-                        <td>customer</td>
-                        <td><button class="delete-project"></button></td>
-                    </tr>
-                    <tr>
-                        <td>project name</td>
-                        <td class="separator"></td>
-                        <td>due date</td>
-                        <td>created</td>
-                        <td>members</td>
-                        <td>type</td>
-                        <td>status</td>
-                        <td>customer</td>
-                        <td><button class="delete-project"></button></td>
-                    </tr>
-                    <tr>
-                        <td>project name</td>
-                        <td class="separator"></td>
-                        <td>due date</td>
-                        <td>created</td>
-                        <td>members</td>
-                        <td>type</td>
-                        <td>status</td>
-                        <td>customer</td>
-                        <td><button class="delete-project"></button></td>
-                    </tr>
-                    <tr>
-                        <td>project name</td>
-                        <td class="separator"></td>
-                        <td>due date</td>
-                        <td>created</td>
-                        <td>members</td>
-                        <td>type</td>
-                        <td>status</td>
-                        <td>customer</td>
-                        <td><button class="delete-project"></button></td>
-                    </tr>
-                    <tr>
-                        <td>project name</td>
-                        <td class="separator"></td>
-                        <td>due date</td>
-                        <td>created</td>
-                        <td>members</td>
-                        <td>type</td>
-                        <td>status</td>
-                        <td>customer</td>
-                        <td><button class="delete-project"></button></td>
-                    </tr>
-                    <tr>
-                        <td>project name</td>
-                        <td class="separator"></td>
-                        <td>due date</td>
-                        <td>created</td>
-                        <td>members</td>
-                        <td>type</td>
-                        <td>status</td>
-                        <td>customer</td>
-                        <td><button class="delete-project"></button></td>
-                    </tr>
-                    <tr>
-                        <td>project name</td>
-                        <td class="separator"></td>
-                        <td>due date</td>
-                        <td>created</td>
-                        <td>members</td>
-                        <td>type</td>
-                        <td>status</td>
-                        <td>customer</td>
-                        <td><button class="delete-project"></button></td>
-                    </tr>
-                    <tr>
-                        <td>project name</td>
-                        <td class="separator"></td>
-                        <td>due date</td>
-                        <td>created</td>
-                        <td>members</td>
-                        <td>type</td>
-                        <td>status</td>
-                        <td>customer</td>
-                        <td><button class="delete-project"></button></td>
-                    </tr>
-                    <tr>
-                        <td>project name</td>
-                        <td class="separator"></td>
-                        <td>due date</td>
-                        <td>created</td>
-                        <td>members</td>
-                        <td>type</td>
-                        <td>status</td>
-                        <td>customer</td>
-                        <td><button class="delete-project"></button></td>
-                    </tr>
-                    <tr>
-                        <td>project name</td>
-                        <td class="separator"></td>
-                        <td>due date</td>
-                        <td>created</td>
-                        <td>members</td>
-                        <td>type</td>
-                        <td>status</td>
-                        <td>customer</td>
-                        <td><button class="delete-project"></button></td>
-                    </tr>
-                    <tr>
-                        <td>project name</td>
-                        <td class="separator"></td>
-                        <td>due date</td>
-                        <td>created</td>
-                        <td>members</td>
-                        <td>type</td>
-                        <td>status</td>
-                        <td>customer</td>
-                        <td><button class="delete-project"></button></td>
-                    </tr>
-                    <tr>
-                        <td>project name</td>
-                        <td class="separator"></td>
-                        <td>due date</td>
-                        <td>created</td>
-                        <td>members</td>
-                        <td>type</td>
-                        <td>status</td>
-                        <td>customer</td>
-                        <td><button class="delete-project"></button></td>
-                    </tr>
-                </tbody>
             </table>
         </section>
-        <aside class="menu right-menu">
+        <aside class="menu right-menu hide-right-menu" data-element="menuRight">
             <form>
                 <input type="text" id="projectName" placeholder="project name:">
                 <input type="text" id="dueDate" placeholder="due date" class="date">
                 <input type="text" id="createdDate" placeholder="created" class="date">
                 <input type="text" id="membersCount" placeholder="members:">
-                <select id="taskType" name="taskType" class="dropdown">
-                    <option disabled selected value> type: </option>
-                    <option value="Petya">Create party</option>
-                </select>
-                <select id="customer" name="customer" class="dropdown">
-                    <option disabled selected value> customer: </option>
-                    <option value="Petya">Petya</option>
-                </select>
+                <div class="dropdown-container" data-element="dropdownType">
+                    <div class="dropdown">
+                        <span class = "dropdown-value">type:</span>
+                    </div>
+                    <ul class="dropdown-list hidden">
+                        <li>web</li>
+                        <li>descktop</li>
+                        <li>mobile</li>
+                        <li>support</li>
+                    </ul>
+                </div>
+                <div class="dropdown-container" data-element="dropdownCustomer">
+                    <div class="dropdown">
+                        <span class = "dropdown-value">customer:</span>
+                    </div>
+                    <ul class="dropdown-list hidden">
+                        <li>Petya</li>
+                        <li>Paul</li>
+                        <li>Colin</li>
+                    </ul>
+                </div>
                 <button class="create-project">create</button>
             </form>
         </aside>
