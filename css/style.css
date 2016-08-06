@@ -1,3 +1,7 @@
+* {
+    box-sizing: border-box;
+}
+
 html {
     height: 100%;
 }
@@ -12,7 +16,7 @@ body {
 
 /*--------------------------------------------------- menu toggle -------------------------------------------------------*/
 
-.menu-toggle {
+.toggle-menu {
     position: fixed;
     top: 1.25em;
     left: 1.5em;
@@ -23,7 +27,7 @@ body {
     transition: background-color .3s linear;
 }
 
-.menu-toggle:before {
+.toggle-menu:before {
     content: "";
     position: absolute;
     width: 2em;
@@ -42,6 +46,7 @@ body {
     padding: 6.79em 1.333em 6em;
     margin-left: 20.444em;
     position: relative;
+    transition: margin .35s linear;
 }
 
 .main-content table {
@@ -59,6 +64,7 @@ body {
     border-bottom: 2px solid #737374;
     background: #0A0B0D;
     z-index: 1;
+    transition: all .35s linear;
 }
 
 .main-content thead tr {
@@ -66,14 +72,9 @@ body {
     width: 100%;
 }
 
-.main-content th {
+.main-content th span{
     cursor: pointer;
     font-weight: normal;
-}
-
-.main-content th:last-of-type,
-.main-content thead .separator{
-    cursor: default;
 }
 
 .main-content th,
@@ -126,16 +127,74 @@ body {
     transition: opacity .3s linear;
 }
 
+/*--------------------------------------------- table cells width -------------------------------------------------*/
+
+.main-content th:first-of-type,
+.main-content td:first-of-type {
+    width: 26.489%;
+    min-width: 26.489%;
+}
+
+.main-content .separator {
+    width: 1.724%;
+    min-width: 1.724%;
+}
+
+.main-content th:nth-of-type(3),
+.main-content td:nth-of-type(3) {
+    width: 9.718%;
+    min-width: 9.718%;
+}
+
+.main-content th:nth-of-type(4),
+.main-content td:nth-of-type(4) {
+    width: 9.718%;
+    min-width: 9.718%;
+}
+
+.main-content th:nth-of-type(5),
+.main-content td:nth-of-type(5) {
+    width: 9.091%;
+    min-width: 9.091%;
+}
+
+.main-content th:nth-of-type(6),
+.main-content td:nth-of-type(6) {
+    width: 10.345%;
+    min-width: 10.345%;
+}
+
+.main-content th:nth-of-type(7),
+.main-content td:nth-of-type(7) {
+    width: 17.085%;
+    min-width: 17.085%;
+}
+
+.main-content th:nth-of-type(8),
+.main-content td:nth-of-type(8) {
+    width: 11.442%;
+    min-width: 11.442%;
+}
+
+.main-content th:last-of-type,
+.main-content td:last-of-type {
+    width: 4.389%;
+    min-width: 4.389%;
+}
+
 /*--------------------------------------------------- menus -------------------------------------------------------*/
 
 .menu {
     text-transform: uppercase;
     position: fixed;
-    box-sizing: border-box;
     height: 100%;
     background: #000000;
     overflow-y: auto;
     z-index: 50;
+}
+
+.menu form {
+    margin-bottom: 7em;
 }
 
 .left-menu {
@@ -143,14 +202,17 @@ body {
     top: 0;
     font-size: 1.125em;
     width: 20.444em;
-    padding: 7em 2.556em 4.444em;
+    padding: 7em 2.556em 0;
+    transition: left .35s linear;
+    overflow-y: hidden;
 }
 
 .right-menu {
     right: 0;
     top: 0;
     width: 23em;
-    padding: 7.875em 2.875em;
+    padding: 7.875em 2.875em 0;
+    transition: right .35s linear;
 }
 
 .input-group {
@@ -169,7 +231,7 @@ body {
 }
 
 .menu input,
-.menu select {
+.menu .dropdown-container {
     height: 3.875em;
     margin-bottom: 2.125em;
     padding: 0 2.5em 0 1em;
@@ -179,6 +241,27 @@ body {
     border-bottom: 2px solid #E67817;
 }
 
+.menu .dropdown-container {
+    height: auto;
+    min-height: 3.875em;
+    padding: 0;
+    cursor: pointer;
+}
+
+.menu .dropdown-value {
+    padding: 0 2.5em 0 1em;
+    line-height: 3.875em;
+}
+
+.menu .dropdown-list {
+    text-align: center;
+}
+
+.menu .dropdown-list li {
+    padding: 1.25em 0;
+    cursor: pointer;
+}
+
 .menu input[type="checkbox"] {
     display: none;
 }
@@ -186,7 +269,6 @@ body {
 .menu input[type="checkbox"] + label {
     position: relative;
     float: left;
-    box-sizing: border-box;
     width: 50%;
     cursor: pointer;
 }
@@ -310,11 +392,9 @@ label {
     user-select: none;
 }
 
-input,
-select {
+input {
     font: inherit;
     display: block;
-    box-sizing: border-box;
     border: none;
 }
 
@@ -333,15 +413,9 @@ input[type="search"]::-webkit-search-results-decoration {
     display: none; 
 }
 
-select {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-}
-
 /*---------------------------------------------- elements states ---------------------------------------------------*/
 
-.menu-toggle:hover {
+.toggle-menu:hover {
     background-color: #4A4A4A;
 }
 
@@ -356,8 +430,7 @@ select {
     transform: scale(1, 1);
 }
 
-input:focus,
-select:focus {
+input:focus {
     outline: none;
 }
 
@@ -388,6 +461,45 @@ input:focus::-ms-input-placeholder {
 
 .main-content tbody tr:hover .delete-project {
     opacity: .8;
+}
+
+/*-----------------------------------------------------toggles---------------------------------------------------------*/
+
+.hidden {
+    display: none;
+}
+
+.bordered-bottom {
+    border-bottom: 2px solid #FFFFFF;
+}
+
+.menu .dropdown-list li:hover {
+    background: #2C2A27;
+}
+
+.hide-left-menu {
+    left: -20.444em;
+    width: 0;
+    transition: left .35s linear,
+                width 0s linear .35s;
+}
+
+.hide-right-menu {
+    right: -23em;
+    width: 0;
+    transition: right .35s linear,
+                width 0s linear .35s;
+}
+
+.main-content-full-width {
+    margin-left: 0;
+    transition: margin .35s linear;
+}
+
+.main-content .thead-full-width {
+    margin-left: 1.333em;
+    left: 0;
+    transition: all .35s linear;
 }
 
 /*------------------------------------------------- media queries -----------------------------------------------------*/
@@ -425,5 +537,9 @@ input:focus::-ms-input-placeholder {
 @media screen and ( max-width: 800px ) {
     body {
         font-size: .5em;
+    }
+    .main-content thead,
+    .main-content table{
+       min-width: 52em;
     }
 }
