@@ -385,7 +385,8 @@ button {
     padding: 0;
 }
 
-label {
+label,
+th span{
     -webkit-user-select: none;  
     -moz-user-select: none;    
     -ms-user-select: none; 
