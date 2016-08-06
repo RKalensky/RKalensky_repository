@@ -1,0 +1,135 @@
+{
+    "tableContent": [
+        {
+            "id": "01",
+            "projectName": "project bla bla bla bla bla bla bla",
+            "dueDate": "12-08-2016",
+            "createdDate": "01-08-2016",
+            "members": 1,
+            "type": "web",
+            "status": "new",
+            "customer": "Infopulse"
+        },
+        {
+            "id": "25",
+            "projectName": "strong project",
+            "dueDate": "13-09-2016",
+            "createdDate": "22-07-2016",
+            "members": 5,
+            "type": "support",
+            "status": "in-progress",
+            "customer": "Bosch"
+        },
+        {
+            "id": "07",
+            "projectName": "project_5464",
+            "dueDate": "25-10-2016",
+            "createdDate": "03-08-2016",
+            "members": 16,
+            "type": "web",
+            "status": "new",
+            "customer": "Evonik"
+        },
+        {
+            "id": "54",
+            "projectName": "project_1356",
+            "dueDate": "07-09-2016",
+            "createdDate": "22-07-2016",
+            "members": 1,
+            "type": "mobile",
+            "status": "prepared to deliver",
+            "customer": "Revacom"
+        },
+        {
+            "id": "13",
+            "projectName": "project_zzzzzz",
+            "dueDate": "05-09-2016",
+            "createdDate": "09-07-2016",
+            "members": 6,
+            "type": "desktop",
+            "status": "in-progress",
+            "customer": "Evonik"
+        },
+        {
+            "id": "02",
+            "projectName": "project_N",
+            "dueDate": "18-08-2016",
+            "createdDate": "01-08-2016",
+            "members": 2,
+            "type": "support",
+            "status": "delivered",
+            "customer": "Revacom"
+        },
+        {
+            "id": "32",
+            "projectName": "Infopulse local",
+            "dueDate": "03-09-2016",
+            "createdDate": "01-08-2016",
+            "members": 2,
+            "type": "mobile",
+            "status": "new",
+            "customer": "Infopulse"
+        },
+        {
+            "id": "93",
+            "projectName": "projject_2wqsad",
+            "dueDate": "16-01-2017",
+            "createdDate": "20-07-2016",
+            "members": 19,
+            "type": "mobile",
+            "status": "in-progress",
+            "customer": "Infopulse"
+        },
+        {
+            "id": "38",
+            "projectName": "clinical local",
+            "dueDate": "06-08-2016",
+            "createdDate": "21-03-2016",
+            "members": 31,
+            "type": "support",
+            "status": "delivered",
+            "customer": "CareFusion"
+        },
+        {
+            "id": "53",
+            "projectName": "projject_10",
+            "dueDate": "08-09-2016",
+            "createdDate": "17-06-2016",
+            "members": 19,
+            "type": "web",
+            "status": "in-progress",
+            "customer": "CareFusion"
+        },
+        {
+            "id": "67",
+            "projectName": "projject_234dsf",
+            "dueDate": "16-11-2016",
+            "createdDate": "28-07-2016",
+            "members": 8,
+            "type": "web",
+            "status": "new",
+            "customer": "Bosch"
+        },
+        {
+            "id": "87",
+            "projectName": "projject_zxcasd",
+            "dueDate": "09-09-2016",
+            "createdDate": "02-08-2016",
+            "members": 1,
+            "type": "desktop",
+            "status": "prepared to deliver",
+            "customer": "Evonik"
+        }
+    ],
+    
+    "customers": [
+        "Evonik",
+        "Bosch",
+        "CareFusion",
+        "Infopulse",
+        "Revacom",
+        "MTC",
+        "Vodafone",
+        "AvMed"
+    ]
+}
