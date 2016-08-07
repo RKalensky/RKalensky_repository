@@ -2,7 +2,9 @@
     
     var json = null,
         xhr = new XMLHttpRequest(),
+        activeEvements = {},
         tableOfIssues,
+        body = document.body,
         mainContent = document.querySelector(".main-content"),
         table = mainContent.querySelector("table"),
         tHead = table.querySelector("thead"),
@@ -40,6 +42,7 @@
         </tr>\
     ";
     
+    body.addEventListener("click", resetActiveEvements);
     toggleMenu.addEventListener("click", leftMenuAction);
     addNewProject.addEventListener("click", rightMenuAction);
     
@@ -156,7 +159,6 @@
     }
     
     function leftMenuAction(event) {
-        event.stopPropagation();
         leftMenu.classList.toggle("hide-left-menu");
         mainContent.classList.toggle("main-content-full-width");
         tHead.classList.toggle("thead-full-width");
@@ -165,7 +167,25 @@
     function rightMenuAction(event) {
         event.stopPropagation();
         var dataName = rightMenu.getAttribute("data-element");
+        activeEvements[dataName] = {
+            elem: rightMenu,
+            isVisible: true, 
+            clsName: dataName
+        };
         rightMenu.classList.toggle("hide-right-menu");
+    }
+    
+     function hideMenu(options) {
+        options.elem.classList.toggle("hide-right-menu");
+        delete activeEvements[options.clsName];
+    }
+
+    function resetActiveEvements() {
+        for(var o in activeEvements) {
+            if(~o.toLowerCase().indexOf("menu")) {
+                hideMenu(activeEvements[o]);
+            }
+        }
     }
   
 })();
