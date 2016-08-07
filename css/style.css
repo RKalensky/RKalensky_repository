@@ -535,12 +535,12 @@ input:focus::-ms-input-placeholder {
     }
 }
 
-@media screen and ( max-width: 800px ) {
+@media screen and ( max-width: 860px ) {
     body {
         font-size: .5em;
     }
     .main-content thead,
     .main-content table{
-       min-width: 52em;
+       min-width: 53em;
     }
 }
