@@ -11,7 +11,9 @@
         leftMenu = document.querySelector(".left-menu"),
         rightMenu = document.querySelector(".right-menu"),
         toggleMenu = document.querySelector(".toggle-menu"),
-        addNewProject = document.querySelector(".add-new-project");
+        addNewProject = document.querySelector(".add-new-project"),
+        dropdownContainer = document.querySelectorAll(".dropdown-container"),
+        dropdownList = document.querySelectorAll(".dropdown-list");
             
     var filterDate = new Pikaday({
         field: document.getElementById('filterDate'),
@@ -45,6 +47,12 @@
     body.addEventListener("click", resetActiveEvements);
     toggleMenu.addEventListener("click", leftMenuAction);
     addNewProject.addEventListener("click", rightMenuAction);
+    rightMenu.addEventListener("click", rightMenuListener);
+    
+    for(var i = 0; i < dropdownContainer.length; i++){
+        dropdownContainer[i].addEventListener("click", dropdownAction());
+        dropdownList[i].addEventListener("click", selectItem());
+    }
     
     getDataDb("GET", "/src/JSONData.json", true);
     
@@ -62,8 +70,6 @@
             tHead.addEventListener("click", tableOfIssues.sortTable());
         }
     };
-    
-    
     
     function Table(table, tableData, tableTemplate) {
         var tBody = document.createElement("tbody"),
@@ -175,11 +181,75 @@
         rightMenu.classList.toggle("hide-right-menu");
     }
     
-     function hideMenu(options) {
+    function rightMenuListener(event){
+        event.stopPropagation();
+        
+        for(var o in activeEvements) {
+            if(~o.toLowerCase().indexOf("dropdown")) {
+                resetDropdown(activeEvements[o]);
+            }
+        }
+    }
+    
+    function hideMenu(options) {
         options.elem.classList.toggle("hide-right-menu");
         delete activeEvements[options.clsName];
     }
 
+    function dropdownAction(event) {
+        var o = {};
+        
+        return function(event) {
+            event.stopPropagation();
+            
+            if(!activeEvements[o.clsName]) {
+                o = activeEvements[this.getAttribute("data-element")] = {}
+                o.clsName = this.getAttribute("data-element");
+                o.context = this;
+                o.dList = this.querySelector(".dropdown-list");
+                o.dDown = this.querySelector(".dropdown");
+                o.isVisible = false;
+            }
+            
+            if(!o.isVisible) {
+                o.dList.classList.toggle("hidden");
+                o.dDown.classList.toggle("bordered-bottom");
+                o.dDown.classList.toggle("dropdown-reverse");
+                o.isVisible = true;
+                return;
+            }
+            
+            resetDropdown(o);
+            o = {};
+        };
+    }
+
+    function selectItem() {
+        var o = {};
+        
+        return function(event) {
+            event.stopPropagation();
+            
+            if (!Object.keys(o).length) {
+                o.clsName = this.parentElement.getAttribute("data-element");
+                o.dList = this;
+                o.dDown = this.parentElement.querySelector(".dropdown");
+                o.dValue = this.parentElement.querySelector(".dropdown-value");
+            }
+
+            var target = event.target;
+            o.dValue.innerText = target.innerText;
+            resetDropdown(o);
+        }
+    }
+
+    function resetDropdown(options) {
+        options.dDown.classList.toggle("bordered-bottom");
+        options.dDown.classList.toggle("dropdown-reverse");
+        options.dList.classList.toggle("hidden");
+        delete activeEvements[options.clsName];
+    }
+    
     function resetActiveEvements() {
         for(var o in activeEvements) {
             if(~o.toLowerCase().indexOf("menu")) {
