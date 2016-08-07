@@ -37,7 +37,6 @@
     ";
     
     function getDataDb(method, src, async) {
-        debugger;
         xhr.open(method, src, async);
         xhr.send();
         xhr.onreadystatechange = function() {
@@ -48,6 +47,7 @@
             }
             json = JSON.parse(xhr.responseText);
             tableOfIssues = new Table(table, json.tableContent, tableTemplate);
+            tHead.addEventListener("click", tableOfIssues.sortTable());
         }
     };
     
@@ -75,6 +75,75 @@
             }
             table.appendChild(tBody);  
         })();
+        
+        this.sortTable = function() {
+            var lastTarget = null;
+            return function(event){
+                
+                var curTarget = event.target.parentElement;
+                
+                while(curTarget.tagName != "TH") {
+                    curTarget = curTarget.parentElement;
+                    if(curTarget.tagName == "BODY") {
+                        return;
+                    }
+                }
+                
+                var tBodyRows = Array.prototype.slice.call(tBody.rows),
+                    targetType = curTarget.getAttribute("data-type"),
+                    cellIndex = curTarget.cellIndex;
+                
+                if(lastTarget == curTarget) {
+                    tBodyRows.reverse();
+                    appendTableData();
+                    return;
+                }
+                
+                if(curTarget.getAttribute("data-sortable") == "no") {
+                    return; 
+                }
+                
+                switch(targetType) {
+                    case "number" : {
+                        var compare = function(rowA, rowB) {
+                            var cellA = rowA.cells[cellIndex].innerText;
+                            var cellB = rowB.cells[cellIndex].innerText;
+                            return cellA - cellB;
+                        };
+                        break;
+                    }   
+                    case "string" : {  
+                        var compare = function(rowA, rowB) {
+                            var cellA = rowA.cells[cellIndex].innerText.toLocaleLowerCase();
+                            var cellB = rowB.cells[cellIndex].innerText.toLocaleLowerCase();
+                            return cellA > cellB ? 1 : -1;
+                        };
+                        break;
+                    }  
+                    case "date" : {
+                        var compare = function(rowA, rowB) {
+                            var dateA = new Date(rowA.cells[cellIndex].innerText.split("-").reverse().join("."));
+                            var dateB = new Date(rowB.cells[cellIndex].innerText.split("-").reverse().join("."));
+                            return dateA - dateB;
+                        };
+                        break;
+                    }    
+                }
+                tBodyRows.sort(compare);
+                lastTarget = curTarget;
+                appendTableData();
+                
+                function appendTableData(){
+                    table.removeChild(tBody);
+
+                    for (var i = 0; i < tBodyRows.length; i++) {
+                        tBody.appendChild(tBodyRows[i]);
+                    }
+
+                    table.appendChild(tBody);
+                }
+            }
+        }
     }
-    
+  
 })();
