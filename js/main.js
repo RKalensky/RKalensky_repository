@@ -1,5 +1,5 @@
 ;(function(){
-    
+    'use strict';
     var json = null,
         xhr = new XMLHttpRequest(),
         activeEvements = {},
@@ -14,7 +14,9 @@
         addNewProject = document.querySelector(".add-new-project"),
         dropdownContainer = document.querySelectorAll(".dropdown-container"),
         dropdownList = document.querySelectorAll(".dropdown-list"),
-        filters = leftMenu.querySelectorAll(".filter-group input[type='checkbox']");
+        filters = leftMenu.querySelectorAll(".filter-group input[type='checkbox']"),
+        searchField = document.querySelector(".search-field"),
+        filterDateField = document.getElementById("filterDate");
             
     var filterDate = new Pikaday({
         field: document.getElementById('filterDate'),
@@ -23,24 +25,26 @@
 
     var dueDate = new Pikaday({
         field: document.getElementById('dueDate'),
-        format: 'DD-MM-YYYY'
+        format: 'DD-MM-YYYY',
+        minDate: new Date()
     });
 
     var createdDate = new Pikaday({
         field: document.getElementById('createdDate'),
-        format: 'DD-MM-YYYY'
+        format: 'DD-MM-YYYY',
+        maxDate: new Date()
     });
     
     var tableTemplate = "\
         <tr>\
-            <td data-content='projectName'></td>\
+            <td data-content='projectName' data-type='string'></td>\
             <td class='separator'></td>\
-            <td data-content='dueDate'></td>\
-            <td data-content='createdDate'></td>\
-            <td data-content='members'></td>\
-            <td data-content='type'></td>\
-            <td data-content='status'></td>\
-            <td data-content='customer'></td>\
+            <td data-content='dueDate' data-type='date'></td>\
+            <td data-content='createdDate' data-type='date'></td>\
+            <td data-content='members' data-type='number'></td>\
+            <td data-content='type' data-type='string'></td>\
+            <td data-content='status' data-type='string'></td>\
+            <td data-content='customer' data-type='string'></td>\
             <td><button class='delete-project'></button></td>\
         </tr>\
     ";
@@ -73,14 +77,18 @@
             
             tableOfIssues = new Table(table, json.tableContent, tableTemplate);
             tHead.addEventListener("click", tableOfIssues.sortTable());
+            searchField.addEventListener("keyup", tableOfIssues.search);
+            filterDateField.addEventListener("change", tableOfIssues.filterDate);
+            filterDateField.addEventListener("keyup", tableOfIssues.filterDate);
             for(var i = 0; i < filters.length; i++){
-                filters[i].addEventListener("click", tableOfIssues.filterData());
+                filters[i].addEventListener("change", tableOfIssues.filterType());
             }
         }
     };
     
     function Table(table, tableData, tableTemplate) {
         var tBody = document.createElement("tbody"),
+            trCollection = tBody.rows,
             dummyTr = document.createElement("tr"),
             tr = document.createElement("tr"),
             dataContent;
@@ -171,29 +179,82 @@
             }
         }
         
-        this.filterData = function() {
-            var typesColumn = [],
-                trCollection = tBody.rows;
-            
+        this.filterType = function() {
+            var filteredCells = [];
             for(var i = 0; i < trCollection.length; i++) {
-                var tr = trCollection[i]
-                for(var j = 0; j < tr.cells.length; j++)
-                if(tr.cells[j].getAttribute("data-content") === "type") {
-                    typesColumn.push(tr.cells[j]);
+                var tr = trCollection[i];
+                for(var j = 0; j < tr.cells.length; j++) {
+                    if(tr.cells[j].getAttribute("data-content") == "type") {
+                        filteredCells.push(tr.cells[j]);
+                    }
                 }
             }
             
             return function(event) {
                 var target = event.target,
                     filterEntry = target.name.toLowerCase().replace("chkbox", "");
-                for(var i = 0; i < typesColumn.length; i++) {
-                    if(filterEntry === typesColumn[i].innerText.toLowerCase()) {
-                        typesColumn[i].parentElement.hidden = !typesColumn[i].parentElement.hidden;
+                for(var i = 0; i < filteredCells.length; i++) {
+                    if(filterEntry == filteredCells[i].innerText.toLowerCase()) {
+                        if(target.checked) {
+                            filteredCells[i].parentElement.hidden = false;
+                        } else {
+                            filteredCells[i].parentElement.hidden = true;
+                        }
                     }
                 }
             }
         }
         
+        
+        this.search = function() {
+            var target = event.target,
+                targetValue = target.value.toLowerCase().trim();
+
+            if(!targetValue) {
+                for(var i = 0; i < trCollection.length; i++) {
+                    trCollection[i].hidden = false;
+                }
+            }
+            
+            filterRows(targetValue, "data-type", "string")
+        }
+        
+        this.filterDate = function(event) {
+            var target = event.target,
+                targetValue = target.value.toLowerCase().trim(),
+                reg = /^(0[1-9]|[1-2][0-9]|3[0-1])-(0[1-9]|1[0-2])-([0-9]{4})$/;
+            
+            if(!targetValue) {
+                for(var i = 0; i < trCollection.length; i++) {
+                    trCollection[i].hidden = false;
+                }
+            }
+            
+            if(!reg.test(targetValue)) return;
+            
+            filterRows(targetValue, "data-type", "date");
+        }
+        
+        function filterRows(targetValue, dataAttr, dataValue) {
+            for(var i = 0; i < trCollection.length; i++) {
+                var tr = trCollection[i],
+                    isEqual = false;
+
+                for(var j = 0; j < tr.cells.length; j++) {
+                    var tdDataType = tr.cells[j].getAttribute(dataAttr),
+                        innerText = tr.cells[j].innerText.toLowerCase();
+                    if(~innerText.indexOf(targetValue) && tdDataType == dataValue) {
+                        isEqual = true;
+                        break;
+                    }
+                }
+                if(!isEqual) {
+                    tr.hidden = true;
+                } else {
+                    tr.hidden = false;
+                }
+            }
+        }
     }
     
     function leftMenuAction(event) {
@@ -291,5 +352,5 @@
             }
         }
     }
-  
+    
 })();
