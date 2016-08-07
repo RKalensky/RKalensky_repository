@@ -5,7 +5,11 @@
         tableOfIssues,
         mainContent = document.querySelector(".main-content"),
         table = mainContent.querySelector("table"),
-        tHead = table.querySelector("thead");
+        tHead = table.querySelector("thead"),
+        leftMenu = document.querySelector(".left-menu"),
+        rightMenu = document.querySelector(".right-menu"),
+        toggleMenu = document.querySelector(".toggle-menu"),
+        addNewProject = document.querySelector(".add-new-project");
             
     var filterDate = new Pikaday({
         field: document.getElementById('filterDate'),
@@ -36,6 +40,11 @@
         </tr>\
     ";
     
+    toggleMenu.addEventListener("click", leftMenuAction);
+    addNewProject.addEventListener("click", rightMenuAction);
+    
+    getDataDb("GET", "/src/JSONData.json", true);
+    
     function getDataDb(method, src, async) {
         xhr.open(method, src, async);
         xhr.send();
@@ -51,7 +60,7 @@
         }
     };
     
-    getDataDb("GET", "/src/JSONData.json", true);
+    
     
     function Table(table, tableData, tableTemplate) {
         var tBody = document.createElement("tbody"),
@@ -144,6 +153,19 @@
                 }
             }
         }
+    }
+    
+    function leftMenuAction(event) {
+        event.stopPropagation();
+        leftMenu.classList.toggle("hide-left-menu");
+        mainContent.classList.toggle("main-content-full-width");
+        tHead.classList.toggle("thead-full-width");
+    }
+
+    function rightMenuAction(event) {
+        event.stopPropagation();
+        var dataName = rightMenu.getAttribute("data-element");
+        rightMenu.classList.toggle("hide-right-menu");
     }
   
 })();
