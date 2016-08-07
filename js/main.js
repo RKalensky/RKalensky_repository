@@ -13,7 +13,8 @@
         toggleMenu = document.querySelector(".toggle-menu"),
         addNewProject = document.querySelector(".add-new-project"),
         dropdownContainer = document.querySelectorAll(".dropdown-container"),
-        dropdownList = document.querySelectorAll(".dropdown-list");
+        dropdownList = document.querySelectorAll(".dropdown-list"),
+        filters = leftMenu.querySelectorAll(".filter-group input[type='checkbox']");
             
     var filterDate = new Pikaday({
         field: document.getElementById('filterDate'),
@@ -48,11 +49,10 @@
     toggleMenu.addEventListener("click", leftMenuAction);
     addNewProject.addEventListener("click", rightMenuAction);
     rightMenu.addEventListener("click", rightMenuListener);
+    addGroupEventListeners(dropdownContainer, "click", dropdownAction());
+    addGroupEventListeners(dropdownList, "click", selectItem());
+    addGroupEventListeners(filters, "change", function(){console.log("!")});
     
-    for(var i = 0; i < dropdownContainer.length; i++){
-        dropdownContainer[i].addEventListener("click", dropdownAction());
-        dropdownList[i].addEventListener("click", selectItem());
-    }
     
     getDataDb("GET", "/src/JSONData.json", true);
     
@@ -255,6 +255,12 @@
             if(~o.toLowerCase().indexOf("menu")) {
                 hideMenu(activeEvements[o]);
             }
+        }
+    }
+    
+    function addGroupEventListeners(elements, event, listener) {
+        for(var i = 0; i < elements.length; i++){
+            elements[i].addEventListener(event, listener);
         }
     }
   
