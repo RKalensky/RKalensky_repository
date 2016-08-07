@@ -215,18 +215,18 @@ body {
     transition: right .35s linear;
 }
 
-.input-group {
+.filter-group {
     background: #0D0D0D;
     margin-bottom: 2.111em;
     padding: 1.444em 4%;
     border-bottom: 2px solid #E67817;
 }
 
-.input-group .input-row-group {
+.filter-group .filter-row-group {
     margin-bottom: 2em;
 }
 
-.input-group .input-row-group:last-of-type {
+.filter-group .filter-row-group:last-of-type {
     margin-bottom: 0;
 }
 
