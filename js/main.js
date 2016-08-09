@@ -1,9 +1,12 @@
 ;(function(){
     'use strict';
     var json = null,
+        currentDate = new Date(),
         xhr = new XMLHttpRequest(),
         activeEvements = {},
         tableOfIssues,
+        customers,
+        taskTypes,
         body = document.body,
         mainContent = document.querySelector(".main-content"),
         table = mainContent.querySelector("table"),
@@ -12,9 +15,9 @@
         rightMenu = document.querySelector(".right-menu"),
         toggleMenu = document.querySelector(".toggle-menu"),
         addNewProject = document.querySelector(".add-new-project"),
-        dropdownContainer = document.querySelectorAll(".dropdown-container"),
-        dropdownList = document.querySelectorAll(".dropdown-list"),
-        filters = leftMenu.querySelectorAll(".filter-group input[type='checkbox']"),
+        dropdownCustomers = document.querySelector(".dropdown-container[data-element='dropdownCustomer']"),
+        dropdownTaskTypes = document.querySelector(".dropdown-container[data-element='dropdownType']"),
+        filters = leftMenu.querySelector(".filter-group"),
         searchField = document.querySelector(".search-field"),
         filterDateField = document.getElementById("filterDate");
             
@@ -26,13 +29,14 @@
     var dueDate = new Pikaday({
         field: document.getElementById('dueDate'),
         format: 'DD-MM-YYYY',
-        minDate: new Date()
+        minDate: currentDate
     });
 
     var createdDate = new Pikaday({
         field: document.getElementById('createdDate'),
         format: 'DD-MM-YYYY',
-        maxDate: new Date()
+        maxDate: currentDate,
+        minDate: new Date(new Date().setDate(currentDate.getDate() - 2))
     });
     
     var tableTemplate = "\
@@ -53,14 +57,6 @@
     toggleMenu.addEventListener("click", leftMenuAction);
     addNewProject.addEventListener("click", rightMenuAction);
     rightMenu.addEventListener("click", rightMenuListener);
-
-    for(var i = 0; i < dropdownContainer.length; i++){
-        dropdownContainer[i].addEventListener("click", dropdownAction());
-    }
-    
-    for(var i = 0; i < dropdownList.length; i++){
-        dropdownList[i].addEventListener("click", selectItem());
-    }
     
     getDataDb("GET", "/src/JSONData.json", true);
     
@@ -73,20 +69,25 @@
                 alert( 'ошибка: ' + (this.status ? this.statusText : 'запрос не удался') );
                 return;
             }
-            json = JSON.parse(xhr.responseText);
-            
-            tableOfIssues = new Table(table, json.tableContent, tableTemplate);
-            tHead.addEventListener("click", tableOfIssues.sortTable());
-            searchField.addEventListener("keyup", tableOfIssues.search);
-            filterDateField.addEventListener("change", tableOfIssues.filterDate);
-            filterDateField.addEventListener("keyup", tableOfIssues.filterDate);
-            for(var i = 0; i < filters.length; i++){
-                filters[i].addEventListener("change", tableOfIssues.filterType());
-            }
+            writeDataDb(xhr.responseText);
         }
     };
     
-    function Table(table, tableData, tableTemplate) {
+    function writeDataDb(request) {
+//        if(localStorage.getItem("tableContent")) {
+//            tableOfIssues = new Table(localStorage.getItem("JSONDataDb"), tableTemplate);
+//        } else {
+//            json = JSON.parse(request);
+//            localStorage.setItem("tableContent", request);
+//            tableOfIssues = new Table(localStorage.getItem("tableContent"), tableTemplate);
+        json = JSON.parse(request);
+        tableOfIssues = new Table(json.tableContent, tableTemplate);
+        customers = new Dropdown(dropdownCustomers, json.customers.sort()); 
+        taskTypes = new Dropdown(dropdownTaskTypes, json.taskTypes.sort());
+    }
+    
+/********************** table constructor *************************/
+    function Table(tableData, tableTemplate) {
         var tBody = document.createElement("tbody"),
             trCollection = tBody.rows,
             dummyTr = document.createElement("tr"),
@@ -95,9 +96,12 @@
         
         dummyTr.innerHTML = tableTemplate;
         
+/********************** table appending *************************/       
         (function fillTable(){
             for(var i = 0; i < tableData.length; i++) {
                 tr = dummyTr.cloneNode(true);
+                tr.setAttribute("data-id", tableData[i].id);
+                var dueDate = new Date(convertDate(tableData[i].dueDate));
                 
                 for(var j = 0; j < tr.cells.length; j++) {
                     dataContent = tr.cells[j].getAttribute("data-content");
@@ -105,38 +109,47 @@
                         tr.cells[j].innerText = tableData[i][dataContent];
                     }
                 }
+                
+                if(currentDate > dueDate.setDate(dueDate.getDate()+1)) {
+                    tr.classList.add("overDue");
+                }
                 tBody.appendChild(tr);
             }
             table.appendChild(tBody);  
         })();
         
+/********************** table sorting *************************/        
         this.sortTable = function() {
             var lastTarget = null;
             return function(event){
+                var th = event.target.parentElement;
                 
-                var curTarget = event.target.parentElement;
-                
-                while(curTarget.tagName != "TH") {
-                    curTarget = curTarget.parentElement;
-                    if(curTarget.tagName == "BODY") {
+                while(th.tagName != "TH") {
+                    th = th.parentElement;
+                    if(th.tagName == "BODY") {
                         return;
                     }
                 }
                 
                 var tBodyRows = Array.prototype.slice.call(tBody.rows),
-                    targetType = curTarget.getAttribute("data-type"),
-                    cellIndex = curTarget.cellIndex;
+                    targetType = th.getAttribute("data-type"),
+                    cellIndex = th.cellIndex;
                 
-                if(lastTarget == curTarget) {
+                if(lastTarget != th && lastTarget) {
+                    lastTarget.className = "";
+                }
+                
+                if(lastTarget == th) {
                     tBodyRows.reverse();
+                    th.classList.toggle("sorting-ascending");
+                    th.classList.toggle("sorting-descending");
                     appendTableData();
                     return;
                 }
                 
-                if(curTarget.getAttribute("data-sortable") == "no") {
+                if(th.getAttribute("data-sortable") == "no") {
                     return; 
                 }
-                
                 switch(targetType) {
                     case "number" : {
                         var compare = function(rowA, rowB) {
@@ -156,15 +169,16 @@
                     }  
                     case "date" : {
                         var compare = function(rowA, rowB) {
-                            var dateA = new Date(rowA.cells[cellIndex].innerText.split("-").reverse().join("."));
-                            var dateB = new Date(rowB.cells[cellIndex].innerText.split("-").reverse().join("."));
+                            var dateA = new Date(convertDate(rowA.cells[cellIndex].innerText));
+                            var dateB = new Date(convertDate(rowB.cells[cellIndex].innerText));
                             return dateA - dateB;
                         };
                         break;
                     }    
                 }
                 tBodyRows.sort(compare);
-                lastTarget = curTarget;
+                th.classList.toggle("sorting-ascending");
+                lastTarget = th;
                 appendTableData();
                 
                 function appendTableData(){
@@ -179,6 +193,7 @@
             }
         }
         
+/********************** filtering by type *************************/        
         this.filterType = function() {
             var filteredCells = [];
             for(var i = 0; i < trCollection.length; i++) {
@@ -191,6 +206,7 @@
             }
             
             return function(event) {
+                if (event.target.tagName != "INPUT") return;
                 var target = event.target,
                     filterEntry = target.name.toLowerCase().replace("chkbox", "");
                 for(var i = 0; i < filteredCells.length; i++) {
@@ -205,8 +221,8 @@
             }
         }
         
-        
-        this.search = function() {
+/********************** table search *************************/         
+        this.search = function(event) {
             var target = event.target,
                 targetValue = target.value.toLowerCase().trim();
 
@@ -216,13 +232,15 @@
                 }
             }
             
-            filterRows(targetValue, "data-type", "string")
+            runFilter(targetValue, "data-type", "string");
         }
-        
+ 
+/********************** date filtering *************************/ 
         this.filterDate = function(event) {
+            debugger;
             var target = event.target,
                 targetValue = target.value.toLowerCase().trim(),
-                reg = /^(0[1-9]|[1-2][0-9]|3[0-1])-(0[1-9]|1[0-2])-([0-9]{4})$/;
+                reg = /(0[1-9]|[1-2][0-9]|3[0-1])-(0[1-9]|1[0-2])-([0-9]{4})/;
             
             if(!targetValue) {
                 for(var i = 0; i < trCollection.length; i++) {
@@ -232,10 +250,36 @@
             
             if(!reg.test(targetValue)) return;
             
-            filterRows(targetValue, "data-type", "date");
+            runFilter(targetValue, "data-type", "date");
         }
         
-        function filterRows(targetValue, dataAttr, dataValue) {
+/********************** delete data *************************/         
+        this.deleteProject = function(event) {
+            if(!~event.target.className.indexOf("delete-project")) return;
+            var target = event.target,
+                tr = target.parentElement,
+                id = "";
+            
+            while(tr.tagName != "TR") {
+                tr = tr.parentElement;
+                if(tr.tagName == "BODY") {
+                    return;
+                }
+            }
+            
+            id = tr.getAttribute("data-id");
+            
+            for(var i = 0; i < tableData.length; i++) {
+                if(tableData[i].id == id) {
+                    tableData.splice(i, 1);
+                    tBody.removeChild(tr);
+                    break;
+                }
+            }
+        }
+
+/********************** filtering function ************************/ 
+        function runFilter(targetValue, dataAttr, dataValue) {
             for(var i = 0; i < trCollection.length; i++) {
                 var tr = trCollection[i],
                     isEqual = false;
@@ -255,7 +299,93 @@
                 }
             }
         }
+        
+        tBody.addEventListener("click", this.deleteProject);
+        tHead.addEventListener("click", this.sortTable());
+        searchField.addEventListener("keyup", this.search);
+        filters.addEventListener("change", this.filterType());
+        filterDateField.addEventListener("change", this.filterDate);
+        filterDateField.addEventListener("keyup", this.filterDate);
     }
+/*********************** end table constructor *********************/    
+    
+/******************** custom dropdown constructor ******************/     
+    function Dropdown(dropdownContainer, list){
+        dropdownContainer.addEventListener("click", dropdownOpen());
+        var clsName = dropdownContainer.getAttribute("data-element");
+    
+/********************** dropdown appending *************************/
+        (function fillDropdown(){
+            var ul = document.createElement("ul");
+            ul.classList.add("dropdown-list", "hidden");
+            var li = document.createElement("li");
+            var dummyLi;
+            
+            for(var i = 0; i < list.length; i++) {
+                dummyLi = li.cloneNode(true);
+                dummyLi.innerText = list[i];
+                ul.appendChild(dummyLi);
+            }
+            
+            dropdownContainer.appendChild(ul);
+            ul.addEventListener("click", selectItem());
+        })();
+        
+/************************* open dropdown *************************/     
+        function dropdownOpen() {
+            var o = {};
+            return function(event) {
+                event.stopPropagation();
+                if(!activeEvements[clsName]) {
+                    o = activeEvements[clsName] = {};
+                    o.clsName = clsName;
+                    o.dList = this.querySelector(".dropdown-list");
+                    o.dDown = this.querySelector(".dropdown");
+                    o.isVisible = false;
+                }
+
+                if(!o.isVisible) {
+                    o.dList.classList.toggle("hidden");
+                    o.dDown.classList.toggle("bordered-bottom");
+                    o.dDown.classList.toggle("dropdown-reverse");
+                    o.isVisible = true;
+                    return;
+                }
+                
+                Dropdown.resetDropdown(o);
+                o = {};
+            };
+        }
+        
+/******************** select item ********************/ 
+        function selectItem() {
+            var o = {};
+
+            return function(event) {
+                event.stopPropagation();
+                if (!Object.keys(o).length) {
+                    o.clsName = this.parentElement.getAttribute("data-element");
+                    o.dList = this;
+                    o.dDown = this.parentElement.querySelector(".dropdown");
+                    o.dValue = this.parentElement.querySelector(".dropdown-value");
+                }
+
+                var target = event.target;
+                o.dValue.innerText = target.innerText;
+                Dropdown.resetDropdown(o);
+            }
+        }
+        
+/*********************** close ***********************/ 
+        Dropdown.resetDropdown = function(options) {
+            options.dDown.classList.toggle("bordered-bottom");
+            options.dDown.classList.toggle("dropdown-reverse");
+            options.dList.classList.toggle("hidden");
+            delete activeEvements[options.clsName];
+        }
+        
+    }   
+/********** end custom dropdown constructor **********/   
     
     function leftMenuAction(event) {
         leftMenu.classList.toggle("hide-left-menu");
@@ -274,12 +404,12 @@
         rightMenu.classList.toggle("hide-right-menu");
     }
     
-    function rightMenuListener(event){
+    function rightMenuListener(event) {
         event.stopPropagation();
         
         for(var o in activeEvements) {
             if(~o.toLowerCase().indexOf("dropdown")) {
-                resetDropdown(activeEvements[o]);
+                Dropdown.resetDropdown(activeEvements[o]);
             }
         }
     }
@@ -288,58 +418,9 @@
         options.elem.classList.toggle("hide-right-menu");
         delete activeEvements[options.clsName];
     }
-
-    function dropdownAction() {
-        var o = {};
-        
-        return function(event) {
-            event.stopPropagation();
-            if(!activeEvements[o.clsName]) {
-                o = activeEvements[this.getAttribute("data-element")] = {}
-                o.clsName = this.getAttribute("data-element");
-                o.context = this;
-                o.dList = this.querySelector(".dropdown-list");
-                o.dDown = this.querySelector(".dropdown");
-                o.isVisible = false;
-            }
-            
-            if(!o.isVisible) {
-                o.dList.classList.toggle("hidden");
-                o.dDown.classList.toggle("bordered-bottom");
-                o.dDown.classList.toggle("dropdown-reverse");
-                o.isVisible = true;
-                return;
-            }
-            
-            resetDropdown(o);
-            o = {};
-        };
-    }
-
-    function selectItem() {
-        var o = {};
-        
-        return function(event) {
-            event.stopPropagation();
-            
-            if (!Object.keys(o).length) {
-                o.clsName = this.parentElement.getAttribute("data-element");
-                o.dList = this;
-                o.dDown = this.parentElement.querySelector(".dropdown");
-                o.dValue = this.parentElement.querySelector(".dropdown-value");
-            }
-
-            var target = event.target;
-            o.dValue.innerText = target.innerText;
-            resetDropdown(o);
-        }
-    }
-
-    function resetDropdown(options) {
-        options.dDown.classList.toggle("bordered-bottom");
-        options.dDown.classList.toggle("dropdown-reverse");
-        options.dList.classList.toggle("hidden");
-        delete activeEvements[options.clsName];
+    
+    function convertDate(date){
+        return date.split("-").reverse().join("-");
     }
     
     function resetActiveEvements() {
@@ -348,7 +429,7 @@
                 hideMenu(activeEvements[o]);
             }
             if(~o.toLowerCase().indexOf("dropdown")) {
-                resetDropdown(activeEvements[o]);
+                Dropdown.resetDropdown(activeEvements[o]);
             }
         }
     }
