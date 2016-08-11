@@ -291,7 +291,7 @@ body {
     width: 2.5em;
     height: 2.5em;
     display: block;
-    background: url("../img/verification-mark.svg") 50% 50% no-repeat /2.3em;
+    background: url("../img/verification-mark.svg") no-repeat 50% 50% /2.3em;
     -webkit-transition: all .15s linear;
     transition: all .15s linear;
 }
@@ -496,7 +496,6 @@ input:focus::-ms-input-placeholder {
     opacity: 0;
 }
 
-
 .right-menu .create-project:active,
 .popup-container .popup button:active {
     box-shadow: none;    
@@ -505,6 +504,12 @@ input:focus::-ms-input-placeholder {
 .right-menu .create-project:active {
     -webkit-transform: translateY(.35em);
     transform: translateY(.35em);
+}
+
+.right-menu .create-project:active:disabled {
+    -webkit-transform: none;
+    transform: none;
+    box-shadow: 0 .35em 0 0 #9C5110; 
 }
 
 .popup-container .popup button:active {
