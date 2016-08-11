@@ -7,6 +7,7 @@
         tableOfIssues,
         customers,
         taskTypes,
+        submitForm,
         body = document.body,
         mainContent = document.querySelector(".main-content"),
         table = mainContent.querySelector("table"),
@@ -19,7 +20,12 @@
         dropdownTaskTypes = document.querySelector(".dropdown-container[data-element='dropdownType']"),
         filters = leftMenu.querySelector(".filter-group"),
         searchField = document.querySelector(".search-field"),
-        filterDateField = document.getElementById("filterDate");
+        filterDateField = document.getElementById("filterDate"),
+        rightForm = rightMenu.querySelector("form"),
+        rightFormSubmitButton = rightMenu.querySelector("button"),
+        popupContainer = document.querySelector(".popup-container"),
+        confirmDelete = popupContainer.querySelector(".popup .continue"),
+        abortDelete = popupContainer.querySelector(".popup .abort");
             
     var filterDate = new Pikaday({
         field: document.getElementById('filterDate'),
@@ -81,64 +87,64 @@
 //            localStorage.setItem("tableContent", request);
 //            tableOfIssues = new Table(localStorage.getItem("tableContent"), tableTemplate);
         json = JSON.parse(request);
-        tableOfIssues = new Table(json.tableContent, tableTemplate);
-        customers = new Dropdown(dropdownCustomers, json.customers.sort()); 
-        taskTypes = new Dropdown(dropdownTaskTypes, json.taskTypes.sort());
+        tableOfIssues = new Table(tableTemplate, json.tableContent);
+        customers = new Dropdown(dropdownCustomers, json.customers.sort(), "customer"); 
+        taskTypes = new Dropdown(dropdownTaskTypes, json.taskTypes.sort(), "type");
+        submitForm = new CheckForm(rightForm, rightFormSubmitButton, tableOfIssues);
     }
     
 /********************** table constructor *************************/
-    function Table(tableData, tableTemplate) {
+    function Table(tableTemplate, tableData) {
         var tBody = document.createElement("tbody"),
             trCollection = tBody.rows,
             dummyTr = document.createElement("tr"),
             tr = document.createElement("tr"),
-            dataContent;
+            dataContent,
+            isTableChanged = false;
+        this.lastId;
         
         dummyTr.innerHTML = tableTemplate;
         
 /********************** table appending *************************/       
-        (function fillTable(){
+        this.fillTable = function(tableData) {
             for(var i = 0; i < tableData.length; i++) {
                 tr = dummyTr.cloneNode(true);
                 tr.setAttribute("data-id", tableData[i].id);
-                var dueDate = new Date(convertDate(tableData[i].dueDate));
-                
+                var status,
+                    dueDate = new Date(convertDate(tableData[i].dueDate)),
+                    createdDate = new Date(convertDate(tableData[i].createdDate));
+                status = checkStatus(currentDate, createdDate, dueDate);
                 for(var j = 0; j < tr.cells.length; j++) {
                     dataContent = tr.cells[j].getAttribute("data-content");
                     if(tableData[i][dataContent]) {
                         tr.cells[j].innerText = tableData[i][dataContent];
                     }
+                    if(dataContent == "status") {
+                        tr.cells[j].innerText = status;
+                    }
                 }
-                
-                if(currentDate > dueDate.setDate(dueDate.getDate()+1)) {
-                    tr.classList.add("overDue");
-                }
+                if(status == "overDue") tr.classList.add(status);
                 tBody.appendChild(tr);
             }
-            table.appendChild(tBody);  
-        })();
-        
+            if(!this.lastId) this.lastId = tableData[i-1].id;
+            table.appendChild(tBody);
+            isTableChanged = true;
+        };
+        this.fillTable(tableData);
+          
 /********************** table sorting *************************/        
-        this.sortTable = function() {
+        function sortTable() {
             var lastTarget = null;
             return function(event){
                 var th = event.target.parentElement;
-                
-                while(th.tagName != "TH") {
-                    th = th.parentElement;
-                    if(th.tagName == "BODY") {
-                        return;
-                    }
-                }
-                
+                th = getParent(th, "TH");
+                if(!th) return;
                 var tBodyRows = Array.prototype.slice.call(tBody.rows),
                     targetType = th.getAttribute("data-type"),
                     cellIndex = th.cellIndex;
-                
                 if(lastTarget != th && lastTarget) {
                     lastTarget.className = "";
                 }
-                
                 if(lastTarget == th) {
                     tBodyRows.reverse();
                     th.classList.toggle("sorting-ascending");
@@ -146,7 +152,6 @@
                     appendTableData();
                     return;
                 }
-                
                 if(th.getAttribute("data-sortable") == "no") {
                     return; 
                 }
@@ -180,95 +185,83 @@
                 th.classList.toggle("sorting-ascending");
                 lastTarget = th;
                 appendTableData();
-                
                 function appendTableData(){
                     table.removeChild(tBody);
-
                     for (var i = 0; i < tBodyRows.length; i++) {
                         tBody.appendChild(tBodyRows[i]);
                     }
-
                     table.appendChild(tBody);
                 }
             }
         }
         
 /********************** filtering by type *************************/        
-        this.filterType = function() {
-            var filteredCells = [];
-            for(var i = 0; i < trCollection.length; i++) {
-                var tr = trCollection[i];
-                for(var j = 0; j < tr.cells.length; j++) {
-                    if(tr.cells[j].getAttribute("data-content") == "type") {
-                        filteredCells.push(tr.cells[j]);
-                    }
-                }
-            }
-            
-            return function(event) {
+        function filterType() {
+            var filteredTdOfTypes = getTdsOfTypes();
+            isTableChanged = false;
+            return function() {
                 if (event.target.tagName != "INPUT") return;
+                if (isTableChanged) filteredTdOfTypes = getTdsOfTypes();
                 var target = event.target,
                     filterEntry = target.name.toLowerCase().replace("chkbox", "");
-                for(var i = 0; i < filteredCells.length; i++) {
-                    if(filterEntry == filteredCells[i].innerText.toLowerCase()) {
+                for(var i = 0; i < filteredTdOfTypes.length; i++) {
+                    if(filterEntry == filteredTdOfTypes[i].innerText.toLowerCase()) {
                         if(target.checked) {
-                            filteredCells[i].parentElement.hidden = false;
+                            filteredTdOfTypes[i].parentElement.hidden = false;
                         } else {
-                            filteredCells[i].parentElement.hidden = true;
+                            filteredTdOfTypes[i].parentElement.hidden = true;
                         }
                     }
                 }
             }
         }
         
+        function getTdsOfTypes() {
+            var tdCollection = [];
+            for(var i = 0; i < trCollection.length; i++) {
+                var tr = trCollection[i];
+                for(var j = 0; j < tr.cells.length; j++) {
+                    if(tr.cells[j].getAttribute("data-content") == "type") {
+                        tdCollection.push(tr.cells[j]);
+                    }
+                }
+            }
+            return tdCollection;
+        }
+        
 /********************** table search *************************/         
-        this.search = function(event) {
+        function search(event) {
             var target = event.target,
                 targetValue = target.value.toLowerCase().trim();
-
             if(!targetValue) {
                 for(var i = 0; i < trCollection.length; i++) {
                     trCollection[i].hidden = false;
                 }
             }
-            
             runFilter(targetValue, "data-type", "string");
         }
  
 /********************** date filtering *************************/ 
-        this.filterDate = function(event) {
-            debugger;
+        function filterDate(event) {
             var target = event.target,
-                targetValue = target.value.toLowerCase().trim(),
-                reg = /(0[1-9]|[1-2][0-9]|3[0-1])-(0[1-9]|1[0-2])-([0-9]{4})/;
-            
+                targetValue = target.value.toLowerCase().trim();
             if(!targetValue) {
                 for(var i = 0; i < trCollection.length; i++) {
                     trCollection[i].hidden = false;
                 }
             }
-            
-            if(!reg.test(targetValue)) return;
-            
+            if(!isDate(targetValue)) return;
             runFilter(targetValue, "data-type", "date");
         }
         
 /********************** delete data *************************/         
         this.deleteProject = function(event) {
-            if(!~event.target.className.indexOf("delete-project")) return;
             var target = event.target,
                 tr = target.parentElement,
                 id = "";
-            
-            while(tr.tagName != "TR") {
-                tr = tr.parentElement;
-                if(tr.tagName == "BODY") {
-                    return;
-                }
-            }
-            
+            tr = getParent(tr, "TR");
+            if(!tr) return;
             id = tr.getAttribute("data-id");
-            
             for(var i = 0; i < tableData.length; i++) {
                 if(tableData[i].id == id) {
                     tableData.splice(i, 1);
@@ -276,6 +269,7 @@
                     break;
                 }
             }
+            isTableChanged = true;
         }
 
 /********************** filtering function ************************/ 
@@ -283,7 +277,6 @@
             for(var i = 0; i < trCollection.length; i++) {
                 var tr = trCollection[i],
                     isEqual = false;
-
                 for(var j = 0; j < tr.cells.length; j++) {
                     var tdDataType = tr.cells[j].getAttribute(dataAttr),
                         innerText = tr.cells[j].innerText.toLowerCase();
@@ -300,33 +293,45 @@
             }
         }
         
-        tBody.addEventListener("click", this.deleteProject);
-        tHead.addEventListener("click", this.sortTable());
-        searchField.addEventListener("keyup", this.search);
-        filters.addEventListener("change", this.filterType());
-        filterDateField.addEventListener("change", this.filterDate);
-        filterDateField.addEventListener("keyup", this.filterDate);
+        function checkStatus(currentDate, createdDate, dueDate) {
+            var tempDate = new Date();
+            if(currentDate > dueDate.setDate(dueDate.getDate()+1)) {
+                return "overDue";
+            }
+            if(createdDate.setDate(createdDate.getDate()+3) >= currentDate) {
+                return "new";
+            }
+            return "in-progress";
+        }
+        
+        tBody.addEventListener("click", showPopup);
+        tHead.addEventListener("click", sortTable());
+        searchField.addEventListener("keyup", search);
+        filters.addEventListener("change", filterType());
+        filterDateField.addEventListener("change", filterDate);
+        filterDateField.addEventListener("keyup", filterDate);
     }
 /*********************** end table constructor *********************/    
     
 /******************** custom dropdown constructor ******************/     
-    function Dropdown(dropdownContainer, list){
+    function Dropdown(dropdownContainer, list, dataType) {
+        Dropdown.elements.push(dropdownContainer);
         dropdownContainer.addEventListener("click", dropdownOpen());
         var clsName = dropdownContainer.getAttribute("data-element");
     
 /********************** dropdown appending *************************/
         (function fillDropdown(){
             var ul = document.createElement("ul");
-            ul.classList.add("dropdown-list", "hidden");
+            ul.classList.add("dropdown-list");
+            ul.classList.add("hidden");
+            ul.setAttribute("data-type", dataType);
             var li = document.createElement("li");
             var dummyLi;
-            
             for(var i = 0; i < list.length; i++) {
                 dummyLi = li.cloneNode(true);
                 dummyLi.innerText = list[i];
                 ul.appendChild(dummyLi);
             }
-            
             dropdownContainer.appendChild(ul);
             ul.addEventListener("click", selectItem());
         })();
@@ -343,7 +348,6 @@
                     o.dDown = this.querySelector(".dropdown");
                     o.isVisible = false;
                 }
-
                 if(!o.isVisible) {
                     o.dList.classList.toggle("hidden");
                     o.dDown.classList.toggle("bordered-bottom");
@@ -351,7 +355,6 @@
                     o.isVisible = true;
                     return;
                 }
-                
                 Dropdown.resetDropdown(o);
                 o = {};
             };
@@ -360,7 +363,6 @@
 /******************** select item ********************/ 
         function selectItem() {
             var o = {};
-
             return function(event) {
                 event.stopPropagation();
                 if (!Object.keys(o).length) {
@@ -369,10 +371,10 @@
                     o.dDown = this.parentElement.querySelector(".dropdown");
                     o.dValue = this.parentElement.querySelector(".dropdown-value");
                 }
-
                 var target = event.target;
                 o.dValue.innerText = target.innerText;
                 Dropdown.resetDropdown(o);
+                submitForm.changeCount(event);
             }
         }
         
@@ -384,8 +386,17 @@
             delete activeEvements[options.clsName];
         }
         
+        Dropdown.resetValues = function() {
+            var text;
+            for(var i = 0; i < Dropdown.elements.length; i++) {
+                text = Dropdown.elements[i].querySelector("span");
+                text.innerText = text.getAttribute("data-initial");
+            }
+        }  
     }   
-/********** end custom dropdown constructor **********/   
+/********** end custom dropdown constructor **********/  
+    
+    Dropdown.elements = [];
     
     function leftMenuAction(event) {
         leftMenu.classList.toggle("hide-left-menu");
@@ -419,11 +430,112 @@
         delete activeEvements[options.clsName];
     }
     
-    function convertDate(date){
+    function CheckForm(form, button, table) {
+        var elements = {},
+            elementsCount = form.children.length - 1;
+        this.changeCount = function(event) {
+            var target = event.target,
+                attr = target.getAttribute("data-type") || target.parentElement.getAttribute("data-type"),
+                value = target.value || target.innerText;
+            if(value) {
+                if(~attr.toLocaleLowerCase().indexOf("date")) {
+                    if(isDate(value)) {
+                        elements[attr] = value;
+                    }
+                } else if(~attr.toLocaleLowerCase().indexOf("members")) {
+                    if(isNaN(value) || value < 1) {
+                        if(elements[attr]) delete elements[attr];
+                        check();
+                        alert("Only numeric and below 0"); 
+                        return;
+                    }
+                    elements[attr] = value;
+                } else {
+                    elements[attr] = value;
+                }
+            } else {
+                if(elements[attr]) delete elements[attr];
+            }
+            check();
+        }
+        
+        function check() {
+            if(Object.keys(elements).length == elementsCount) {
+                button.disabled = false;
+            } else {
+                button.disabled = true;
+            }
+        }
+        
+        function submit(event) {
+            event.preventDefault();
+            elements.id = ++tableOfIssues.lastId;
+            table.fillTable([elements]);
+            elements = {};
+            form.reset();
+            Dropdown.resetValues();
+            button.disabled = true;
+        }
+        
+        for(var i = 0; i < elementsCount; i++) {
+            if(form.children[i].tagName == "DIV") {
+                continue;
+            }
+            form.children[i].addEventListener("keyup", this.changeCount);
+            form.children[i].addEventListener("blur", this.changeCount);
+        }
+        button.addEventListener("click", submit)
+    }
+    
+    function convertDate(date) {
         return date.split("-").reverse().join("-");
     }
     
+    function isDate(date) {
+        var reg = /(0[1-9]|[1-2][0-9]|3[0-1])-(0[1-9]|1[0-2])-([0-9]{4})/;
+        return reg.test(date);
+    }
+    
+    function getParent(elem, tag){
+        while(elem.tagName != tag) {
+            elem = elem.parentElement;
+            if(elem.tagName == "BODY") {
+                return false;
+            }
+        }
+        return elem;
+    }
+    
+    function showPopup(event) {
+        if(!~event.target.className.indexOf("delete-project")) return;
+        event.stopPropagation();
+        popupContainer.classList.toggle("show-popup-container");
+        setOverflow(body, "hidden");
+        abortDelete.onclick = closePopup;
+        confirmDelete.onclick = deleteProjectConfirm(event);
+    }
+    
+    function closePopup(event) {
+        if(event) event.stopPropagation();
+        popupContainer.classList.toggle("show-popup-container");
+        setOverflow(body, "visible");
+    }
+    
+    function setOverflow(elem, value) {
+        elem.style.overflow = value;
+    }
+    
+    function deleteProjectConfirm(ev) {
+        return function(event) {
+            event.stopPropagation;
+            tableOfIssues.deleteProject(ev);
+            closePopup(); 
+        }
+    }
+    
     function resetActiveEvements() {
+        rightForm.reset();
+        Dropdown.resetValues();
         for(var o in activeEvements) {
             if(~o.toLowerCase().indexOf("menu")) {
                 hideMenu(activeEvements[o]);
