@@ -13,7 +13,7 @@
         <button class="toggle-menu"></button>
         <aside class="menu left-menu">
             <form action="localhost" method="post">
-                <input type="search" placeholder="search:" class="search-field">
+                <input type="search" placeholder="search:" class="search-field" autocomplete="off">
                 <fieldset class="filter-group">
                     <fieldset class="filter-row-group">
                         <input type="checkbox" id="webChkbox" name="webChkbox" checked>
@@ -28,7 +28,7 @@
                         <label for="supportChkbox">support</label>
                     </fieldset>
                 </fieldset>
-                <input type="text" id="filterDate" class="date">
+                <input type="text" id="filterDate" class="date" autocomplete="off">
             </form>
         </aside>
         <section class="main-content">
@@ -50,11 +50,11 @@
         </section>
         <aside class="menu right-menu hide-right-menu" data-element="menuRight">
             <form>
-                <input type="text" id="projectName" placeholder="project name:" data-type="projectName">
-                <input type="text" id="dueDate" placeholder="due date" class="date" data-type="dueDate">
-                <input type="text" id="createdDate" placeholder="created" class="date" data-type="createdDate">
-                <input type="text" id="membersCount" placeholder="members:" data-type="members">
-                <div class="dropdown-container" data-element="dropdownType">
+                <input type="text" id="projectName" placeholder="project name:" data-type="projectName" autocomplete="off">
+                <input type="text" id="dueDate" placeholder="due date" class="date" data-type="dueDate" autocomplete="off">
+                <input type="text" id="createdDate" placeholder="created" class="date" data-type="createdDate" autocomplete="off">
+                <input type="text" id="membersCount" placeholder="members:" data-type="members" autocomplete="off">
+                <div class="dropdown-container" data-element="dropdownType" autocomplete="off">
                     <div class="dropdown">
                         <span class="dropdown-value" data-initial="type:">type:</span>
                     </div>
