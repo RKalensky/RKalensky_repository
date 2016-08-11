@@ -28,7 +28,7 @@
         abortDelete = popupContainer.querySelector(".popup .abort");
             
     var filterDate = new Pikaday({
-        field: document.getElementById('filterDate'),
+        field: filterDateField,
         format: 'DD-MM-YYYY'
     });
 
@@ -96,6 +96,7 @@
             dataContent,
             isTableChanged = false;
         this.lastId;
+        this.tableData = tableData;
         
         dummyTr.innerHTML = tableTemplate;
            
@@ -123,7 +124,7 @@
             table.appendChild(tBody);
             isTableChanged = true;
         };
-        this.fillTable(tableData);
+        this.fillTable(this.tableData);
                 
         function sortTable() {
             var lastTarget = null;
@@ -191,7 +192,7 @@
         function filterType() {
             var filteredTdOfTypes = getTdsOfTypes();
             isTableChanged = false;
-            return function() {
+            return function(event) {
                 if (event.target.tagName != "INPUT") return;
                 if (isTableChanged) filteredTdOfTypes = getTdsOfTypes();
                 var target = event.target,
@@ -250,14 +251,14 @@
             tr = getParent(tr, "TR");
             if (!tr) return;
             id = tr.getAttribute("data-id");
-            for (var i = 0; i < tableData.length; i++) {
-                if (tableData[i].id == id) {
-                    tableData.splice(i, 1);
+            for (var i = 0; i < this.tableData.length; i++) {
+                if (this.tableData[i].id == id) {
+                    this.tableData.splice(i, 1);
                     tBody.removeChild(tr);
                     break;
                 }
             }
-            setStorageData("tableContent", tableData);
+            setStorageData("tableContent", this.tableData);
             isTableChanged = true;
         }
 
@@ -412,7 +413,9 @@
     
     function Form(form, button, table) {
         var elements = {},
+            element,
             elementsCount = form.children.length - 1;
+        
         this.changeCount = function(event) {
             var target = event.target,
                 attr = target.getAttribute("data-type") || target.parentElement.getAttribute("data-type"),
@@ -451,8 +454,9 @@
             var localData = getStorageData("tableContent");
             event.preventDefault();
             elements.id = ++tableOfIssues.lastId;
-            data.push(elements);
+            localData.push(elements);
             setStorageData("tableContent", localData);
+            table.tableData.push(elements);
             table.fillTable([elements]);
             elements = {};
             form.reset();
@@ -461,11 +465,14 @@
         }
         
         for (var i = 0; i < elementsCount; i++) {
-            if (form.children[i].tagName == "DIV") {
+            element = form.children[i];
+            if (element.tagName == "DIV") {
                 continue;
             }
-            form.children[i].addEventListener("keyup", this.changeCount);
-            form.children[i].addEventListener("blur", this.changeCount);
+            if (!~element.getAttribute("data-type").toLocaleLowerCase().indexOf("date")) {
+                element.addEventListener("keyup", this.changeCount);
+            }
+            element.addEventListener("blur", this.changeCount);
         }
         button.addEventListener("click", submit)
     }
