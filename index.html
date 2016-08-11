@@ -50,26 +50,35 @@
         </section>
         <aside class="menu right-menu hide-right-menu" data-element="menuRight">
             <form>
-                <input type="text" id="projectName" placeholder="project name:">
-                <input type="text" id="dueDate" placeholder="due date" class="date">
-                <input type="text" id="createdDate" placeholder="created" class="date">
-                <input type="text" id="membersCount" placeholder="members:">
+                <input type="text" id="projectName" placeholder="project name:" data-type="projectName">
+                <input type="text" id="dueDate" placeholder="due date" class="date" data-type="dueDate">
+                <input type="text" id="createdDate" placeholder="created" class="date" data-type="createdDate">
+                <input type="text" id="membersCount" placeholder="members:" data-type="members">
                 <div class="dropdown-container" data-element="dropdownType">
                     <div class="dropdown">
-                        <span class = "dropdown-value">type:</span>
+                        <span class="dropdown-value" data-initial="type:">type:</span>
                     </div>
                 </div>
                 <div class="dropdown-container" data-element="dropdownCustomer">
                     <div class="dropdown">
-                        <span class = "dropdown-value">customer:</span>
+                        <span class="dropdown-value" data-initial="customer:">customer:</span>
                     </div>
                 </div>
-                <button class="create-project">create</button>
+                <button class="create-project" disabled>create</button>
             </form>
         </aside>
         <footer class="main-footer">
             <p>infopulse courses dashboard @ 2016</p>
         </footer>
+        <div class="popup-container">
+            <div class="popup">
+                <h2>Do you realy want to delete it?</h2>
+                <div class="buttons-container">
+                    <button class="continue">Yes</button>
+                    <button class="abort">No</button>
+                </div>
+            </div>
+        </div>
         
         <script src="js/moment.js"></script>
         <script src="js/pikaday.js"></script>
