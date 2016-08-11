@@ -116,16 +116,14 @@ body {
 .main-content .add-new-project {
     min-width: 1.444em;
     height: 1.89em;
-    background: #0A0B0D url(../img/add-project.svg) no-repeat 50% 50%;
-    background-size: contain;
+    background: #0A0B0D url(../img/add-project.svg) no-repeat 50% 50% /contain;
 }
 
 .main-content .delete-project {
     font-size: inherit;
     width: 1.444em;
     height: 1.89em;
-    background: url(../img/remove-project.svg) no-repeat 50% 50%;
-    background-size: contain;
+    background: url(../img/remove-project.svg) no-repeat 50% 50% /contain;
     opacity: .15;
     -webkit-transition: opacity .3s linear;
     transition: opacity .3s linear;
@@ -293,14 +291,13 @@ body {
     width: 2.5em;
     height: 2.5em;
     display: block;
-    background: url("../img/verification-mark.svg") 50% 50% no-repeat;
-    background-size: 2.3em;
+    background: url("../img/verification-mark.svg") 50% 50% no-repeat /2.3em;
     -webkit-transition: all .15s linear;
     transition: all .15s linear;
 }
 
 .menu .search-field {
-    background-image: url("../img/magnifying-glass-search.svg");
+    background: #221203 url("../img/magnifying-glass-search.svg") no-repeat 97% 20% /1.444em;
 }
 
 .menu input::-webkit-input-placeholder {
@@ -326,28 +323,17 @@ body {
     transition: all .3s linear;
 }
 
-.menu .date,
-.menu .dropdown,
-.menu .search-field,
-.menu .dropdown-reverse {
-    background-repeat: no-repeat;
-    background-size: 1.444em;
-    background-position: 97% 20%;
-}
-
 .menu .date {
-    background-image: url("../img/calendar.svg");
+    background: #221203 url("../img/calendar.svg") no-repeat 97% 20% /1.444em;
 }
 
 .menu .dropdown {
     text-transform: uppercase;
-    background-image: url("../img/sorting-arrow.svg");
-    background-position: 97% 30%;
+    background: #221203 url("../img/sorting-arrow.svg") no-repeat 97% 30% /1.444em;
 }
 
 .menu .dropdown-reverse {
-    background-image: url("../img/sorting-arrow-reverse.svg");
-    background-position: 97% 30%;
+    background: #221203 url("../img/sorting-arrow-reverse.svg") no-repeat 97% 30% /1.444em;
 }
 
 .menu .create-project {
@@ -652,13 +638,9 @@ input:focus::-ms-input-placeholder {
     body {
         font-size: .6em;
     }
-    .main-content thead,
-    .main-content table{
-       min-width: 60em;
-    }
 }
 
-@media screen and ( max-width: 860px ) {
+@media screen and ( max-width: 920px ) {
     body {
         font-size: .5em;
     }
